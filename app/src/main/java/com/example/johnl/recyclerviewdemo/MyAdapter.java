@@ -18,7 +18,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private OnItemClickListener mListener;
     //our custom interface which will need to be implemented in MainActivity
     public interface OnItemClickListener{
+        //onItemClick()-used when user clicks on item
         void onItemClick(int position);
+        //onRemoveClick()-used when user clicks remove icon
+        void onRemoveClick(int position);
     }
     //our custom method-used to set the listener
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -35,6 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ImageView imageView;
         public TextView textView1;
         public TextView textView2;
+        public ImageView deleteImageView;
         //The viewholder constructor gets passed the item layout for each
         //  item in the recycler view
         //  -we need to pass a listener into our ctor because methods in a static class
@@ -45,7 +49,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             imageView = itemView.findViewById(R.id.imageView);
             textView1 = itemView.findViewById(R.id.textViewLineOne);
             textView2 = itemView.findViewById(R.id.textViewLineTwo);
-
+            deleteImageView = itemView.findViewById(R.id.deleteView);
+            //set what happens when user clicks on a ViewHolder view
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -58,6 +63,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     }
                 }
             });
+            //set what happens when user clicks on an image icon
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
+                //View.OnClickListener()-provided by android team to handle clicks on views
+                @Override
+                public void onClick(View view) {
+                    if(listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onRemoveClick(position);
+                        }
+                    }
+                }
+            });
+
         }
     }
 

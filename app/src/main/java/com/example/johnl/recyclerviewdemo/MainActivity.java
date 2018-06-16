@@ -32,7 +32,26 @@ public class MainActivity extends AppCompatActivity {
 
         createItemList();
         setUpRecyclerView();
+        setUpButtons();
 
+    }
+    //add an item to the list with the position given & update it in the adapter
+    public void addNewItem(int position){
+        arrayList.add(position, new Item(R.drawable.ic_android,"New Item", "Position: "+position));
+        mAdapter.notifyItemInserted(position);//notifyYtemInserted() adds cool animation
+    }
+    //remove an item to the list with the position given & update it in the adapter
+    public void removeItem(int position){
+        arrayList.remove(position);
+        mAdapter.notifyItemRemoved(position);
+    }
+    //change the details of an item
+    public void changeItem(int position, String text){
+        arrayList.get(position).setmText1(text);
+        mAdapter.notifyItemChanged(position);
+    }
+
+    private void setUpButtons(){
         addBtn = findViewById(R.id.add_button);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,21 +70,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //add an item to the list with the position given & update it in the adapter
-    public void addNewItem(int position){
-        arrayList.add(position, new Item(R.drawable.ic_android,"New Item", "Position: "+position));
-        mAdapter.notifyItemInserted(position);//notifyYtemInserted() adds cool animation
-    }
-    //remove an item to the list with the position given & update it in the adapter
-    public void removeItem(int position){
-        arrayList.remove(position);
-        mAdapter.notifyItemRemoved(position);
-    }
-    //change the details of an item
-    public void changeItem(int position, String text){
-        arrayList.get(position).setmText1(text);
-        mAdapter.notifyItemChanged(position);
-    }
 
     private void setUpRecyclerView() {
         //get the recycler view in our xml layout
@@ -81,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(int position) {
                 //define what happens when an item is clicked
                 changeItem(position,"You Clicked this item!");
+            }
+            //implement abstract method from our custom OnItemClickListener interface
+            @Override
+            public void onRemoveClick(int position) {
+                removeItem(position);
             }
         });
     }
