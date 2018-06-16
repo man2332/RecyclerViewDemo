@@ -4,6 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 
@@ -14,14 +17,62 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    //=Adapter-helps performance-provides only as many views as user is looking at
+    private EditText addET, removeET;
+    private Button addBtn, removeBtn;
 
+    private ArrayList<Item> arrayList;
+
+    //Adapter-helps performance-provides only as many views as user is looking at
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        createItemList();
+        setUpRecyclerView();
+
+        addBtn = findViewById(R.id.add_button);
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addET = findViewById(R.id.add_editText);
+                addNewItem(Integer.parseInt(addET.getText().toString()));
+            }
+        });
+        
+        removeBtn = findViewById(R.id.remove_button);
+        removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeET = findViewById(R.id.remove_editText);
+                removeItem(Integer.parseInt(removeET.getText().toString()));
+            }
+        });
+    }
+    //add an item to the list & update it in the adapter
+    public void addNewItem(int position){
+        arrayList.add(position, new Item(R.drawable.ic_android,"New Item", "Position: "+position));
+        mAdapter.notifyItemInserted(position);
+    }
+    //remove an item to the list & update it in the adapter
+    public void removeItem(int position){
+        arrayList.remove(position);
+        mAdapter.notifyItemRemoved(position);
+    }
+
+    private void setUpRecyclerView() {
+        //get the recycler view in our xml layout
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);//set to true if u know your recycler view won't change in size
+        mLayoutManager = new LinearLayoutManager(this);//i dunno
+        mAdapter = new MyAdapter(arrayList);//create & give an adapter it's data
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void createItemList() {
         //create a list
-        ArrayList<Item> arrayList = new ArrayList<>();
+        arrayList = new ArrayList<>();
         //fill list with fake data
         arrayList.add(new Item(R.drawable.ic_android,"Android", "Super cool"));
         arrayList.add(new Item(R.drawable.ic_attach_money,"Money", "Most cool"));
@@ -41,18 +92,5 @@ public class MainActivity extends AppCompatActivity {
         arrayList.add(new Item(R.drawable.ic_android,"Android", "Super cool"));
         arrayList.add(new Item(R.drawable.ic_attach_money,"Money", "Most cool"));
         arrayList.add(new Item(R.drawable.ic_call,"Call", "Call friend"));
-
-
-        //get the recycler view in our xml layout
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setHasFixedSize(true);//set to true if u know your recycler view won't change in size
-        mLayoutManager = new LinearLayoutManager(this);//i dunno
-        mAdapter = new MyAdapter(arrayList);//create & give an adapter it's data
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-
-
-
-
     }
 }
