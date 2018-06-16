@@ -12,6 +12,10 @@ public class Item {
         this.mText2 = mText2;
     }
 
+    public void setmText1(String mText1) {
+        this.mText1 = mText1;
+    }
+
     public int getmResourceId() {
         return mResourceId;
     }

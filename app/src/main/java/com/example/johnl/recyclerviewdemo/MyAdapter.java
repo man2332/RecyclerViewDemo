@@ -15,6 +15,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     //Create a variable to hold the data within our adapter
     ArrayList<Item> itemList;
 
+    private OnItemClickListener mListener;
+    //our custom interface which will need to be implemented in MainActivity
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+    //our custom method-used to set the listener
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
     public MyAdapter(ArrayList<Item> itemList) {
         this.itemList = itemList;
     }
@@ -27,11 +37,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView textView2;
         //The viewholder constructor gets passed the item layout for each
         //  item in the recycler view
-        public ViewHolder(View itemView) {
+        //  -we need to pass a listener into our ctor because methods in a static class
+        //      cannot access fields in it's parent class that is not static
+        //      we could of removed static in ViewHolder, but doc recommends otherwise
+        public ViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
             textView1 = itemView.findViewById(R.id.textViewLineOne);
             textView2 = itemView.findViewById(R.id.textViewLineTwo);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null){
+                        //listener might be null-if user clicking on a item getting deleted
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION){
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -46,7 +72,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         //      provide .inflate() with the xml layout, the root ViewGroup, & should it attach the new view to root view
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_cardview_item, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(view);//calls the custom ctor
+        ViewHolder viewHolder = new ViewHolder(view, mListener);//calls the custom ctor
 
         return viewHolder;
     }
